@@ -5,6 +5,7 @@ from PyQt4.QtWebKit import QWebPage
 from bs4 import BeautifulSoup
 import requests
 from requests.auth import HTTPBasicAuth
+import json
 
 class Client(QWebPage):
 	def __init__(self, url):
@@ -17,11 +18,15 @@ class Client(QWebPage):
 	def on_page_load(self):
 		self.app.quit()
 
-USERNAME = "CHANGEME"
-PASSWORD = "CHANGEME"
+with open('config.json') as json_data_file:
+    data = json.load(json_data_file)
+
+USERNAME = data["admin_username"]
+PASSWORD = data["admin_password"]
+HOST = data["modem_ip"]
 
 auth_token = HTTPBasicAuth(USERNAME, PASSWORD)
-url = "http://{}:{}@192.168.100.1/DocsisStatus.htm".format(USERNAME, PASSWORD)
+url = "http://{}:{}@{}/DocsisStatus.htm".format(USERNAME, PASSWORD, HOST)
 client_response = Client(url)
 html_source = client_response.mainFrame().toHtml()
 
