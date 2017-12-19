@@ -49,5 +49,22 @@ for tr in trs:
 		channels.append(channel)
 	row = row + 1
 
-print channels
+lockedCount = 0
+uncorrectableCount = 0
+totalUncorrectableError = 0
+for ch in channels:
+	if ch["status"] == "Locked":
+		lockedCount += 1
+	if ch["uncorrectables"] > 0:
+		uncorrectableCount += 1
+		totalUncorrectableError = totalUncorrectableError + int(ch["uncorrectables"])
+cableConnection = {}
+cableConnection["locked_count"] = lockedCount
+cableConnection["uncorrectable_error_count"] = uncorrectableCount
+cableConnection["total_uncorrectable_error"] = totalUncorrectableError
+cableConnection["channel_info"] = channels
+
+channelsInfo = json.dumps(cableConnection)
+
+print channelsInfo
 
