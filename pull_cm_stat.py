@@ -33,7 +33,7 @@ html_source = client_response.mainFrame().toHtml()
 soup = BeautifulSoup(str(html_source), "html.parser")
 dsTable = soup.find_all(id="dsTable")
 trs = dsTable[0].find_all("tr")
-channels = []
+channelData = []
 channel = {}
 row = 0
 for tr in trs:
@@ -46,13 +46,14 @@ for tr in trs:
 		channel["snr"] = columns[6].text
 		channel["correctables"] = int(columns[7].text)
 		channel["uncorrectables"] = int(columns[8].text)
-		channels.append(channel)
+		#Must use copy() here for python's dictionary's pointer like behavior
+		channelData.append(channel.copy())
 	row = row + 1
 
 lockedCount = 0
 uncorrectableCount = 0
 totalUncorrectableError = 0
-for ch in channels:
+for ch in channelData:
 	if ch["status"] == "Locked":
 		lockedCount += 1
 	if ch["uncorrectables"] > 0:
@@ -62,7 +63,7 @@ cableConnection = {}
 cableConnection["locked_count"] = lockedCount
 cableConnection["uncorrectable_error_count"] = uncorrectableCount
 cableConnection["total_uncorrectable_error"] = totalUncorrectableError
-cableConnection["channel_info"] = channels
+cableConnection["channel_info"] = channelData
 
 channelsInfo = json.dumps(cableConnection)
 
